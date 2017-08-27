@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"math/rand"
 	"net/http"
+	"os/exec"
 	"regexp"
 	"strconv"
 	"strings"
@@ -101,7 +102,8 @@ func (a *action) Check() {
 
 func (a *action) Execute() {
 	// run the command
-	a.logger.Log("command", a.command)
+	out, err := exec.Command("sh", "-c", a.command).Output()
+	a.logger.Log("command", a.command, "STDOUT", fmt.Sprintf("%s", out), "STDERR", err)
 }
 
 func (a *action) Run() {
