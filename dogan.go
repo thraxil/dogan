@@ -1,5 +1,6 @@
 package main // github.com/thraxil/dogan
 import (
+	"flag"
 	"os"
 	"os/signal"
 	"syscall"
@@ -24,6 +25,9 @@ type config struct {
 }
 
 func main() {
+	configFile := flag.String("config", "/etc/dogan/config.toml", "config file location")
+	flag.Parse()
+
 	var logger log.Logger
 	logger = log.NewJSONLogger(log.NewSyncWriter(os.Stderr))
 	logger = log.With(logger, "ts", log.DefaultTimestampUTC, "caller", log.DefaultCaller)
@@ -32,7 +36,7 @@ func main() {
 	sigs := make(chan os.Signal, 1)
 
 	var conf config
-	if _, err := toml.DecodeFile("sample-config.toml", &conf); err != nil {
+	if _, err := toml.DecodeFile(*configFile, &conf); err != nil {
 		logger.Log("msg", "error loading config file", "error", err)
 		return
 	}
